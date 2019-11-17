@@ -28,7 +28,7 @@ function readAmount() {
  */
 function onBuyClicked() {
   if (!window.PaymentRequest) {
-    console.log('Web payments are not supported in this browser.');
+    alert('Web payments are not supported in this browser.');
     return;
   }
 
@@ -76,11 +76,11 @@ function onBuyClicked() {
   try {
     request = new PaymentRequest(supportedInstruments, details, options);
   } catch (e) {
-    console.log('Payment Request Error: ' + e.message);
+    alert('Payment Request Error: ' + e.message);
     return;
   }
   if (!request) {
-    console.log('Web payments are not supported in this browser.');
+    alert('Web payments are not supported in this browser.');
     return;
   }
 
@@ -96,17 +96,17 @@ function onBuyClicked() {
             if (options.ok) {
               return options.json();
             }
-            console.log('Unable to calculate shipping options.');
+            alert('Unable to calculate shipping options.');
           })
           .then(function(optionsJson) {
             if (optionsJson.status === 'success') {
               updateShipping(details, optionsJson.shippingOptions, resolve);
             } else {
-              console.log('Unable to calculate shipping options.');
+              alert('Unable to calculate shipping options.');
             }
           })
           .catch(function(err) {
-            console.log('Unable to calculate shipping options. ' + err);
+            alert('Unable to calculate shipping options. ' + err);
           });
     }));
   });
@@ -130,7 +130,7 @@ function onBuyClicked() {
         showPaymentUI(request, result);
       })
       .catch((err) => {
-        console.log('Error calling checkCanMakePayment: ' + err);
+        alert('Error calling checkCanMakePayment: ' + err);
       });
 }
 
@@ -167,7 +167,7 @@ function checkCanMakePayment(request) {
         return result;
       })
       .catch((err) => {
-        console.log('Error calling canMakePayment: ' + err);
+        alert('Error calling canMakePayment: ' + err);
       });
 }
 
@@ -190,10 +190,10 @@ function showPaymentUI(request, canMakePayment) {
     window.clearTimeout(paymentTimeout);
     request.abort()
         .then(function() {
-          console.log('Payment timed out after 20 minutes.');
+          alert('Payment timed out after 20 minutes.');
         })
         .catch(function() {
-          console.log('Unable to abort, user is in the process of paying.');
+          alert('Unable to abort, user is in the process of paying.');
         });
   }, 20 * 60 * 1000); /* 20 minutes */
 
@@ -203,7 +203,7 @@ function showPaymentUI(request, canMakePayment) {
         processResponse(instrument);  // Handle response from browser.
       })
       .catch(function(err) {
-        console.log(err);
+        alert(err);
       });
 }
 
@@ -215,7 +215,7 @@ function showPaymentUI(request, canMakePayment) {
  */
 function processResponse(instrument) {
   var instrumentString = instrumentToJsonString(instrument);
-  console.log(instrumentString);
+  alert(instrumentString);
 
   fetch('/buy', {
     method: 'POST',
@@ -227,14 +227,14 @@ function processResponse(instrument) {
         if (buyResult.ok) {
           return buyResult.json();
         }
-        console.log('Error sending instrument to server.');
+        alert('Error sending instrument to server.');
       })
       .then(function(buyResultJson) {
         completePayment(
             instrument, buyResultJson.status, buyResultJson.message);
       })
       .catch(function(err) {
-        console.log('Unable to process payment. ' + err);
+        alert('Unable to process payment. ' + err);
       });
 }
 
@@ -250,15 +250,15 @@ function processResponse(instrument) {
 function completePayment(instrument, result, msg) {
   instrument.complete(result)
       .then(function() {
-        console.log('Payment completes.');
-        console.log(msg);
+        alert('Payment completes.');
+        alert(msg);
         document.getElementById('inputSection').style.display = 'none'
         document.getElementById('outputSection').style.display = 'block'
         document.getElementById('response').innerHTML =
             JSON.stringify(instrument, undefined, 2);
       })
       .catch(function(err) {
-        console.log(err);
+        alert(err);
       });
 }
 
