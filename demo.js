@@ -167,7 +167,7 @@ function checkCanMakePayment(request) {
         return result;
       })
       .catch((err) => {
-        alert('Error calling canMakePayment: ' + err.stack || err);
+        alert('Error calling canMakePayment: ' + (err.stack || err));
       });
 }
 
