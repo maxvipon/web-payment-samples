@@ -115,7 +115,7 @@ function onBuyClicked() {
   const options = {
     requestShipping: true,
     requestPayerName: true,
-    requestPayerPhone: true,
+    requestPayerPhone: false,
     requestPayerEmail: true,
     shippingType: 'shipping',
   };
