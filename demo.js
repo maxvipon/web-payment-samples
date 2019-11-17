@@ -28,7 +28,7 @@ function readAmount() {
  */
 function onBuyClicked() {
   if (!window.PaymentRequest) {
-    alert('Web payments are not supported in this browser.');
+    alert('Web payments are not supported in this browser. UA: ' + window.navigator.userAgent);
     return;
   }
 
