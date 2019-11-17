@@ -1,5 +1,7 @@
 // Global key for canMakepayment cache.
 const canMakePaymentCache = 'canMakePaymentCache';
+const allowedCardNetworks = ["MASTERCARD", "VISA"];
+const allowedCardAuthMethods = ["PAN_ONLY", "CRYPTOGRAM_3DS"];
 
 /**
  * Read data for supported instruments from input from.
@@ -24,6 +26,40 @@ function readAmount() {
 }
 
 /**
+ * Define your unique Google Pay API configuration
+ *
+ * @returns {object} data attribute suitable for PaymentMethodData
+ */
+function getGooglePaymentsConfiguration() {
+  return {
+    environment: 'TEST',
+    apiVersion: 2,
+    apiVersionMinor: 0,
+    merchantInfo: {
+      // A merchant ID is available after approval by Google.
+      // 'merchantId':'01234567890123456789',
+      merchantName: 'Example Merchant'
+    },
+    allowedPaymentMethods: [{
+      type: 'CARD',
+      parameters: {
+        allowedAuthMethods: allowedCardAuthMethods,
+        allowedCardNetworks: allowedCardNetworks
+      },
+      tokenizationSpecification: {
+        type: 'PAYMENT_GATEWAY',
+        // Check with your payment gateway on the parameters to pass.
+        // @see {@link https://developers.google.com/pay/api/web/reference/object#Gateway}
+        parameters: {
+          'gateway': 'example',
+          'gatewayMerchantId': 'exampleGatewayMerchantId'
+        }
+      }
+    }]
+  };
+}
+
+/**
  * Launches payment request.
  */
 function onBuyClicked() {
@@ -40,9 +76,16 @@ function onBuyClicked() {
       data: formValue,
     },
     {
-      supportedMethods: ['https://tez.google.com/pay'],
-      data: formValue,
+      supportedMethods: ['https://google.com/pay'],
+      // data: formValue,
+      data: getGooglePaymentsConfiguration()
     },
+    {
+      supportedMethods: ['basic-card'],
+      data: {
+        supportedNetworks: allowedCardNetworks.map(network => network.toLowerCase())
+      }
+    }
   ];
 
   const details = {
