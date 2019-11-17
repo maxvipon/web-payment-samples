@@ -76,10 +76,10 @@ function onBuyClicked() {
   let formValue = readSupportedInstruments();
 
   const supportedInstruments = [
-    {
-      supportedMethods: ['https://pwp-server.appspot.com/pay-dev'],
-      data: formValue,
-    },
+    // {
+    //   supportedMethods: ['https://pwp-server.appspot.com/pay-dev'],
+    //   data: formValue,
+    // },
     {
       supportedMethods: ['https://google.com/pay'],
       // data: formValue,
@@ -299,7 +299,7 @@ function processResponse(instrument) {
   //     })
   //     .then(function(buyResultJson) {
         let buyResultJson = {
-          status: 'payment_complited',
+          status: 'success',
           message: 'Payment completed'
         };
         completePayment(
