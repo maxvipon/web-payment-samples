@@ -224,7 +224,8 @@ function checkCanMakePayment(request) {
 function showPaymentUI(request, canMakePayment) {
   // Redirect to play store if can't make payment.
   if (!canMakePayment) {
-    redirectToPlayStore();
+    // redirectToPlayStore();
+    alert('Cannot make payments…');
     return;
   }
 
