@@ -97,7 +97,7 @@ function onBuyClicked() {
     total: {
       label: 'Total',
       amount: {
-        currency: 'INR',
+        currency: 'USD',
         value: readAmount(),
       },
     },
@@ -105,7 +105,7 @@ function onBuyClicked() {
       {
         label: 'Original amount',
         amount: {
-          currency: 'INR',
+          currency: 'USD',
           value: readAmount(),
         },
       },
@@ -154,14 +154,14 @@ function onBuyClicked() {
                   id: 'std-shipping',
                   label: 'Standart shipping',
                   amount: {
-                    currency: 'INR',
+                    currency: 'USD',
                     value: Number((readAmount() * getRandomFloat(0.01, 0.1)).toFixed(2)),
                   }
                 }, {
                   id: 'exp-shipping',
                   label: 'Express shipping',
                   amount: {
-                    currency: 'INR',
+                    currency: 'USD',
                     value: Number((readAmount() * getRandomFloat(0.2, 0.5)).toFixed(2)),
                   }
                 }]
