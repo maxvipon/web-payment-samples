@@ -3,6 +3,11 @@ const canMakePaymentCache = 'canMakePaymentCache';
 const allowedCardNetworks = ["MASTERCARD", "VISA"];
 const allowedCardAuthMethods = ["PAN_ONLY", "CRYPTOGRAM_3DS"];
 
+
+function getRandomFloat(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
 /**
  * Read data for supported instruments from input from.
  */
@@ -129,28 +134,46 @@ function onBuyClicked() {
 
   request.addEventListener('shippingaddresschange', function(evt) {
     evt.updateWith(new Promise(function(resolve) {
-      fetch('/ship', {
-        method: 'POST',
-        headers: new Headers({'Content-Type': 'application/json'}),
-        body: addressToJsonString(request.shippingAddress),
-        credentials: 'include',
-      })
-          .then(function(options) {
-            if (options.ok) {
-              return options.json();
-            }
-            alert('Unable to calculate shipping options.');
-          })
-          .then(function(optionsJson) {
-            if (optionsJson.status === 'success') {
+      // fetch('/ship', {
+      //   method: 'POST',
+      //   headers: new Headers({'Content-Type': 'application/json'}),
+      //   body: addressToJsonString(request.shippingAddress),
+      //   credentials: 'include',
+      // })
+      //     .then(function(options) {
+      //       if (options.ok) {
+      //         return options.json();
+      //       }
+      //       alert('Unable to calculate shipping options.');
+      //     })
+      //     .then(function(optionsJson) {
+      //       if (optionsJson.status === 'success') {
+              let optionsJson = {
+                shippingOptions: [{
+                  selected: true,
+                  id: 'std-shipping',
+                  label: 'Standart shipping',
+                  amount: {
+                    currency: 'INR',
+                    value: Number((readAmount() * getRandomFloat(0.01, 0.1)).toFixed(2)),
+                  }
+                }, {
+                  id: 'exp-shipping',
+                  label: 'Express shipping',
+                  amount: {
+                    currency: 'INR',
+                    value: Number((readAmount() * getRandomFloat(0.2, 0.5)).toFixed(2)),
+                  }
+                }]
+              };
               updateShipping(details, optionsJson.shippingOptions, resolve);
-            } else {
-              alert('Unable to calculate shipping options.');
-            }
-          })
-          .catch(function(err) {
-            alert('Unable to calculate shipping options. ' + err);
-          });
+      //       } else {
+      //         alert('Unable to calculate shipping options.');
+      //       }
+      //     })
+      //     .catch(function(err) {
+      //       alert('Unable to calculate shipping options. ' + err);
+      //     });
     }));
   });
 
@@ -243,6 +266,7 @@ function showPaymentUI(request, canMakePayment) {
 
   request.show()
       .then(function(instrument) {
+        console.log(instrument);
         window.clearTimeout(paymentTimeout);
         processResponse(instrument);  // Handle response from browser.
       })
@@ -258,28 +282,32 @@ function showPaymentUI(request, canMakePayment) {
  * @param {PaymentResponse} instrument The payment instrument that was authed.
  */
 function processResponse(instrument) {
-  var instrumentString = instrumentToJsonString(instrument);
-  alert(instrumentString);
+  // var instrumentString = instrumentToJsonString(instrument);
+  // alert(instrumentString);
 
-  fetch('/buy', {
-    method: 'POST',
-    headers: new Headers({'Content-Type': 'application/json'}),
-    body: instrumentString,
-    credentials: 'include',
-  })
-      .then(function(buyResult) {
-        if (buyResult.ok) {
-          return buyResult.json();
-        }
-        alert('Error sending instrument to server.');
-      })
-      .then(function(buyResultJson) {
+  // fetch('/buy', {
+  //   method: 'POST',
+  //   headers: new Headers({'Content-Type': 'application/json'}),
+  //   body: instrumentString,
+  //   credentials: 'include',
+  // })
+  //     .then(function(buyResult) {
+  //       if (buyResult.ok) {
+  //         return buyResult.json();
+  //       }
+  //       alert('Error sending instrument to server.');
+  //     })
+  //     .then(function(buyResultJson) {
+        let buyResultJson = {
+          status: 'payment_complited',
+          message: 'Payment completed'
+        };
         completePayment(
             instrument, buyResultJson.status, buyResultJson.message);
-      })
-      .catch(function(err) {
-        alert('Unable to process payment. ' + err);
-      });
+  //     })
+  //     .catch(function(err) {
+  //       alert('Unable to process payment. ' + err);
+  //     });
 }
 
 /**
@@ -294,7 +322,7 @@ function processResponse(instrument) {
 function completePayment(instrument, result, msg) {
   instrument.complete(result)
       .then(function() {
-        alert('Payment completes.');
+        // alert('Payment completed.');
         alert(msg);
         document.getElementById('inputSection').style.display = 'none'
         document.getElementById('outputSection').style.display = 'block'
